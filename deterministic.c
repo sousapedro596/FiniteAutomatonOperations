@@ -199,52 +199,123 @@ char * join_states(char * state1, char * state2){
 
 */
 
-int is_in_states(char * state, char * states, int size_states ){
+// int is_in_states(char * state, char * states, int size_states ){
 
-	while(size_states--)
-		if(!strcmp(state, states[size_states]))
+// 	while(size_states--)
+// 		if(!strcmp(state, states[size_states]))
+// 			return 1;
+
+// 	return -1;
+// }
+
+
+int already_exists(automaton *automaton_ptr, char * state, char * event_name ){
+
+	events * current = automaton_ptr->events_head;
+
+	if(current == NULL)
+		return 0;
+
+	do{
+
+		if( (!strcmp(current->event_name, event_name)) && (!strcmp(current->from_state, state)) )
+		{
 			return 1;
+		}
+	}
+	while((current = ll_getNextItem(current))!=NULL);
 
-	return -1;
+	return 0;
 }
 
 
+int new_deter_event(automaton *automaton_ptr, automaton *new_deter_automaton, char * state, char *event_name){
+
+	events * current = automaton_ptr->events_head;
+
+	char *new_state;
+	char *new_event_name;
+	char *new_from_state;
+
+	new_state 		= malloc(strlen(state)*sizeof(char));
+	new_event_name 	= malloc(strlen(event_name)*sizeof(char));
+	new_from_state  = malloc(strlen(state)*sizeof(char));
+
+	strcpy(new_event_name, event_name);
+	strcpy(new_from_state, state);
+
+	do{
+
+		if( ( !strcmp(current->event_name, event_name) ) && ( !strcmp(current->from_state, state)) ){
+			
+			if(!realloc(new_state, (strlen(new_state)+ strlen(current->event_name) +2)*sizeof(char) ))
+				printf("realloc error");
+
+			strcat(new_state, "-");
+			strcat(new_state, current->event_name);
+		}
+
+
+	}while( (current = ll_getNextItem(current)) );
+
+
+	if(stateExists(new_state, new_deter_automaton )){
+
+		//add event here
+		new_event_name = malloc(strlen(event_name));
+		new_from_state = malloc(strlen(state));
+
+		addEvent(new_deter_automaton, new_event_name, new_from_state, stateExists(new_state, new_deter_automaton ));
+	
+	}else{
+
+		addState(new_deter_automaton, new_deter_automaton->num_states, new_state);
+		addEvent(new_deter_automaton, new_event_name, new_from_state, stateExists(new_state, new_deter_automaton ));
+
+	}
+
+
+	//TODO check this return later
+	return 1;
+
+}
+
+
+
 /*
+
 	Which is the next state if happens the "event on the 
 	current state  
 
+
 */
-
-
-char * where_it_goes(automaton automaton_ptr, char * states, char *_event_name )
+int  where_it_goes(automaton * automaton_ptr, automaton * new_deter_automaton, char * state)
 {
-	int i, j=0;
 	events * current = automaton_ptr->events_head;
-	char * result_state = NULL;
+
+	printf("------LALALA-------");
+
+	
+	//search all events relative to the selected state!
+	do{
+		//se o evento parte do estado que estamos a tratar
+		if( (!strcmp(current->from_state, state)) && (already_exists(new_deter_automaton, current->event_name, state) == 0) ){
+			//sabendo que os eventos mantem o nome
+			//se o actual ainda n~ao fizer parte adicionamos
+			addState(new_deter_automaton, new_deter_automaton->num_states, state);
+			new_deter_event(automaton_ptr, new_deter_automaton, state, current->event_name);
 
 
+	 	}
 
-	while( states[j] != NULL ){
 
-		for (i =0; i< automaton_ptr->number_of_events ;i++ ){
-
-			//if is the same event and from the same state
-			if((!strcmp(current->event_name, event) && (!strcmp(current->from_state, state))){
-
-				//if the state is not the same
-				if(strcmp(state, current->to_state )){
-					result_state = realloc( strlen(current->to_state) * sizeof(char) );
-					result_state = join_states(result_state, current->to_state);
-				}
-			}
-
-			current = ll_getNextItem(current);
-		}
-
-		j++;
 	}
+	while( (current = ll_getNextItem(current)) );
 
-	return * result_state;
+
+
+
+	return 0;
 }
 
 
@@ -255,28 +326,27 @@ char * where_it_goes(automaton automaton_ptr, char * states, char *_event_name )
 int make_deterministic(automaton  *automaton_ptr){
 
 	//char * aux_new_event
-	//automaton *new_automaton;
+	automaton * new_deter_automaton ;
+
+
+	new_deter_automaton = malloc( sizeof(automaton) );
+	new_deter_automaton ->num_states = 0;
 
 	//ptr = malloc(sizeof(automaton));
 
-	int i,j;
-	int new_states_counter;
-	char ** new_states;
-	events current = automaton_ptr->events_head;
+	//int i, j;
+	//char ** new_states;
+	//events current = automaton_ptr->events_head;
 
 
 	// matrix of new_states
 	// TODO TO_DO Maybe write a function...
-	new_states = malloc(sizeof(char *));
-	new_states[0] = malloc(sizeof(char *));
+	//new_states 		=	malloc(sizeof(char *));
+	//new_states[0] 	= 	malloc(sizeof(char *));
 	
-	new_states[0][0] = malloc(sizeof(char) * strlen(automaton_ptr->initial_state));
-	
-	new_states_counter = 1;
+	//new_states[0][0] = malloc(sizeof(char) * strlen(automaton_ptr->initial_state));
 
-	for(n =0; n < new_states_counter;n++) {
-		
-	};
+	where_it_goes(automaton_ptr, new_deter_automaton, automaton_ptr->states[1] );
 
 
 	return 1;
