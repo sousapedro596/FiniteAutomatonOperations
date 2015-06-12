@@ -27,8 +27,11 @@ int run_automaton_code(int argc, char * argv[]){
 
 	if(is_deterministic(ptr))
 		printf("The automaton is deterministic!\n");
-	else
+	else{
 		printf("The automaton is not deterministic!\n");
+
+		make_deterministic(ptr);
+	}
 
 
 	printEvents(ptr);
