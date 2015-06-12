@@ -41,6 +41,5 @@ typedef struct
 
 
 int read_automaton(automaton *ptr, char *filename);
-
-
+int addState(automaton * automaton_ptr, int num_states, char * aux_string );
 
