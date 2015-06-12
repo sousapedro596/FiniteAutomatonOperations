@@ -131,16 +131,10 @@ int readFinalStates(FILE *file_ptr, automaton *automaton_ptr){
 
 
 /*
-	Reads the name of all states of the automaton
-	(the passed file pointer needs to be in the beguinning of the
-	 states )
-
-	Return:
-		The number of readed lines
+ Add a state to the automaton and increment the number of the states (num_states var)
 
 */
 int addState(automaton * automaton_ptr, int num_states, char * aux_string ){
-
 
 		if(!(automaton_ptr->states = realloc( automaton_ptr->states, sizeof(char *) * (num_states+1) )))
 			return 0;
