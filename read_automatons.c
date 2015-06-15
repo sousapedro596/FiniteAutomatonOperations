@@ -145,7 +145,7 @@ int addState(automaton * automaton_ptr, int num_states, char * aux_string ){
 		
 		automaton_ptr->num_states++;
 
-		return 1;
+		return automaton_ptr->num_states;
 
 }
 

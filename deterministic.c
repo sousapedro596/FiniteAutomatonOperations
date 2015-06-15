@@ -208,6 +208,7 @@ char * join_states(char * state1, char * state2){
 // 	return -1;
 // }
 
+// if there's a state 
 
 int already_exists(automaton *automaton_ptr, char * state, char * event_name ){
 
@@ -248,11 +249,15 @@ int new_deter_event(automaton *automaton_ptr, automaton *new_deter_automaton, ch
 
 		if( ( !strcmp(current->event_name, event_name) ) && ( !strcmp(current->from_state, state)) ){
 			
-			if(!realloc(new_state, (strlen(new_state)+ strlen(current->event_name) +2)*sizeof(char) ))
+			if(!realloc(new_state, (strlen(new_state)+ strlen(current->event_name)  +2)*sizeof(char) ))
 				printf("realloc error");
 
 			strcat(new_state, "-");
 			strcat(new_state, current->event_name);
+
+
+
+
 		}
 
 
@@ -261,14 +266,11 @@ int new_deter_event(automaton *automaton_ptr, automaton *new_deter_automaton, ch
 
 	if(stateExists(new_state, new_deter_automaton )){
 
-		//add event here
-		new_event_name = malloc(strlen(event_name));
-		new_from_state = malloc(strlen(state));
 
 		addEvent(new_deter_automaton, new_event_name, new_from_state, stateExists(new_state, new_deter_automaton ));
 	
 	}else{
-
+		printf("\nAQUI!\n");
 		addState(new_deter_automaton, new_deter_automaton->num_states, new_state);
 		addEvent(new_deter_automaton, new_event_name, new_from_state, stateExists(new_state, new_deter_automaton ));
 
@@ -298,11 +300,14 @@ int  where_it_goes(automaton * automaton_ptr, automaton * new_deter_automaton, c
 	
 	//search all events relative to the selected state!
 	do{
-		//se o evento parte do estado que estamos a tratar
+		//se o evento parte do estado que estamos a tratar e ainda n~ao existe o evento
 		if( (!strcmp(current->from_state, state)) && (already_exists(new_deter_automaton, current->event_name, state) == 0) ){
 			//sabendo que os eventos mantem o nome
 			//se o actual ainda n~ao fizer parte adicionamos
-			addState(new_deter_automaton, new_deter_automaton->num_states, state);
+			if(stateExists(state, new_deter_automaton)==NULL){
+				addState(new_deter_automaton, new_deter_automaton->num_states, state);
+			}
+
 			new_deter_event(automaton_ptr, new_deter_automaton, state, current->event_name);
 
 
@@ -323,11 +328,10 @@ int  where_it_goes(automaton * automaton_ptr, automaton * new_deter_automaton, c
 	Main function to turn the automata deterministci
 
 */
-int make_deterministic(automaton  *automaton_ptr){
+void  make_deterministic(automaton  *automaton_ptr, automaton * new_deter_automaton){
 
 	//char * aux_new_event
-	automaton * new_deter_automaton ;
-
+	int i;
 
 	new_deter_automaton = malloc( sizeof(automaton) );
 	new_deter_automaton ->num_states = 0;
@@ -345,9 +349,13 @@ int make_deterministic(automaton  *automaton_ptr){
 	//new_states[0] 	= 	malloc(sizeof(char *));
 	
 	//new_states[0][0] = malloc(sizeof(char) * strlen(automaton_ptr->initial_state));
+	where_it_goes(automaton_ptr, new_deter_automaton, automaton_ptr->initial_state );
 
-	where_it_goes(automaton_ptr, new_deter_automaton, automaton_ptr->states[1] );
+	for( i=0; i< new_deter_automaton->num_states;i++){
+		printf("\n%d -- num_states=%d\n",i, new_deter_automaton->num_states);
+		where_it_goes(automaton_ptr, new_deter_automaton, automaton_ptr->states[i] );
+	}
 
+	printf("O numero de estados ´e:%d\n", new_deter_automaton->num_states);
 
-	return 1;
 }

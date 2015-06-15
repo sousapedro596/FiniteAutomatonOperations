@@ -12,8 +12,12 @@ int run_automaton_code(int argc, char * argv[]){
 #if 1==1
 
 	automaton *ptr;
+	automaton * new_deter_automaton ;
 
-	ptr = malloc(sizeof(automaton));
+
+	ptr 				=	malloc(sizeof(automaton));
+	new_deter_automaton =	malloc(sizeof(automaton));
+
 
 	if(argc<2){
 		printf("Enter the filename!\n");
@@ -30,7 +34,7 @@ int run_automaton_code(int argc, char * argv[]){
 	else{
 		printf("The automaton is not deterministic!\n");
 
-		make_deterministic(ptr);
+		make_deterministic(ptr, new_deter_automaton);
 	}
 
 
