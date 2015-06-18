@@ -29,13 +29,9 @@ events * ll_getNextItem(events *events_head){
 	If the states exists it return a pointer to is name, 
 	otherwise it returns NULL
 */
-
 char * stateExists(char * state, automaton *automaton_ptr ){
 
 	int i = 0;
-
-	//if(state == NULL || automaton_ptr == NULL || automaton_ptr->states[0] == NULL)
-	//	return NULL;
 
 	while(i < automaton_ptr->num_states){
 		if(!strcmp(state, automaton_ptr->states[i])){
@@ -55,6 +51,7 @@ int addEvent(automaton  *automaton_ptr, char * event_name, char * from, char *to
 	char   * error_state;
 
 	/* Check if States in Events are the of the ones previous defined*/
+
 	if((from = stateExists(from, automaton_ptr))==NULL ){
 		error_state = from;
 		goto state_not_found;
@@ -65,14 +62,6 @@ int addEvent(automaton  *automaton_ptr, char * event_name, char * from, char *to
 		goto state_not_found;
 	}
 
-	/*Allocate the right amount of space for each variable*/
-
-	// if((temp_event->event_name = malloc(strlen(event_name)*sizeof(char))) == NULL )
-	// 	goto out_of_memory;
-	// if((temp_event->from_state = malloc(strlen(from)*sizeof(char))) == NULL)
-	// 	goto out_of_memory;
-	// if((temp_event->to_state = malloc(strlen(to)*sizeof(char))) == NULL )
-	// 	goto out_of_memory;	
 
 	/* Copy the pointer of the new incomming data to the events struct*/
 	temp_event->event_name = event_name;
@@ -95,9 +84,6 @@ int addEvent(automaton  *automaton_ptr, char * event_name, char * from, char *to
 
 	state_not_found:
 		printf("addEvent:The state '%s' presented in _EVENTS is not found on _STATE\n", error_state);
-		//free(event_name);
-		//free(from);
-		//free(to);
 		free(temp_event);
 		return -1;
 }
@@ -107,7 +93,6 @@ int addEvent(automaton  *automaton_ptr, char * event_name, char * from, char *to
 int addEvent2List( events *temp_event, automaton *automaton_ptr)
 {	
 	events * current = automaton_ptr->events_head;
-
 
 	/*Just to handle first element with different name in first structure*/
 	if(automaton_ptr->events_head == NULL){
@@ -123,12 +108,13 @@ int addEvent2List( events *temp_event, automaton *automaton_ptr)
 
 	current->next = temp_event;
 	
-	//free(temp_event);
-
 	return 0;
 }
 
 
+/*
+	Print all events of a Automaton
+*/
 int printEvents(automaton *automaton_ptr){
 
 	if(automaton_ptr == NULL)
@@ -136,7 +122,9 @@ int printEvents(automaton *automaton_ptr){
 
 	events * current = automaton_ptr->events_head;
 
+	printf("\n All Events \n");
 
+	/* Loop through every Event */
 	while(current!=NULL){
 		printf("(%s) - %s -> (%s)\n",current->from_state, current->event_name, current->to_state);
 		current = current->next;
@@ -147,6 +135,10 @@ int printEvents(automaton *automaton_ptr){
 	return 0;
 }
 
+
+/*
+	Print all states of a automaton
+*/
 int printStates(automaton * automaton_ptr ){
 	
 	if(automaton_ptr == NULL)
@@ -165,6 +157,10 @@ int printStates(automaton * automaton_ptr ){
 
 	return 0;
 }
+
+/*
+	Print the initial state of a automaton
+*/
 int printInitial(automaton * automaton_ptr){
 
 	if(automaton_ptr == NULL)
@@ -177,6 +173,9 @@ int printInitial(automaton * automaton_ptr){
 	return 0;
 }
 
+/*
+	Print the final states of a automaton
+*/
 int printFinals(automaton * automaton_ptr){
 
 	if(automaton_ptr == NULL)
@@ -194,7 +193,9 @@ int printFinals(automaton * automaton_ptr){
 	return 0;
 }
 
-
+/*
+	Free all allocated memory for a automaton
+*/
 int ll_freeAllAutomaton(automaton * automaton_ptr){
 
 	if(automaton_ptr == NULL)
